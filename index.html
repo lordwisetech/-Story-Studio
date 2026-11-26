@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Story Studio - 3D Story to Video</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0b1020;color:#eaf0ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+header{padding:10px 14px 4px}header h1{margin:0;font-size:clamp(18px,5vw,26px)}header p{margin:2px 0 0;font-size:12px;opacity:.7}
+#tabs{display:flex;gap:6px;padding:6px 10px;overflow-x:auto}
+#tabs button{flex:1 0 auto;min-height:44px;padding:0 14px;border:0;border-radius:10px;background:#1a2342;color:#cfd9ff;font-weight:700;font-size:14px}
+#tabs button.on{background:#ffb703;color:#111}
+main{flex:1;overflow:auto;padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 14px)}
+.pane{display:none;max-width:760px;margin:0 auto}.pane.on{display:block}
+iframe{width:100%;height:min(62dvh,640px);min-height:320px;border:2px solid #26325f;border-radius:12px;background:#000}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.btn{flex:1 1 140px;min-height:48px;border:0;border-radius:12px;background:#fff;color:#111a3a;font-weight:800;font-size:15px;padding:0 14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.btn.p{background:#ffb703}.btn.g{background:#06d6a0}.btn:disabled{opacity:.4}.btn.off{background:#44507f;color:#fff}
+input[type=text],input[type=password],textarea,select{width:100%;min-height:46px;border-radius:10px;border:1px solid #33427a;background:#121a36;color:#fff;padding:10px;font-size:15px}
+textarea{min-height:300px;font-size:13px;line-height:1.45;font-family:ui-monospace,Menlo,monospace}
+label{display:block;font-size:13px;margin:10px 0 4px;opacity:.85}
+.card{background:#121a36;border-radius:12px;padding:12px;margin:8px 0;font-size:14px;line-height:1.5}
+.vr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;background:#121a36;border-radius:10px;padding:8px;margin:6px 0;font-size:14px}.vr small{opacity:.7}
+.bs{display:flex;gap:6px;flex-wrap:wrap}.bs button{min-height:42px;padding:0 12px;border:0;border-radius:8px;background:#2a3769;color:#fff;font-weight:700}.bs button:first-child{background:#ffb703;color:#111}
+#st{font-size:13px;color:#ffd166;min-height:18px;margin-top:6px}
+  .hint{font-size:12px;opacity:.75;margin:4px 0 8px;line-height:1.4}.hint b{color:#ffd166}
+ol{padding-left:20px;line-height:1.55;font-size:14px}code{background:#1d2850;padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<header><h1>&#127916; Story Studio</h1><p>Import a 3D story (HTML) &rarr; Cartesia voice &rarr; auto-synced scenes &rarr; HD video</p></header>
+<div id="tabs"><button class="on" onclick="tab('p1',this)">Studio</button><button onclick="tab('p2',this)">Voice</button><button onclick="tab('p3',this)">Prompt</button><button onclick="tab('p5',this)">Guide</button><button onclick="tab('p4',this)">How it works</button></div>
+<script>
+function tab(id,b){var a=document.querySelectorAll('#tabs button,.pane');for(var i=0;i<a.length;i++)a[i].classList.remove('on');b.classList.add('on');document.getElementById(id).classList.add('on')}
+window.onerror=function(m,u,l){var e=document.getElementById('st');if(e)e.textContent='Script error: '+m+' (line '+l+')'};
+</script>
+<main>
+<section class="pane on" id="p1">
+  <div class="row"><label class="btn p" for="file">&#128194; Import HTML story</label><input id="file" type="file" accept=".html,.htm,text/html" hidden></div>
+  <div class="hint"><b>Order:</b> 1 Import story &rarr; 2 Voice tab: key &rarr; 3 choose quality &amp; pace &rarr; 4 Start &amp; Record. See the Guide tab.</div>
+  <iframe id="fr" sandbox="allow-scripts allow-same-origin" title="preview"></iframe>
+  <div id="st">Import a story file to begin.</div>
+  <div class="row"><button class="btn g" id="sync">&#127919; Auto-sync audio &amp; video: ON</button></div>
+  <label>Video quality</label>
+  <div class="hint"><b>Choose this BEFORE you press Start &amp; Record.</b> It is locked once recording begins. Press Reset to change it for another take.</div>
+  <select id="qual"><option value="1280x720">HD 1280x720 (16:9)</option><option value="1920x1080" selected>Full HD 1920x1080 (16:9)</option><option value="1080x1920">Vertical 1080x1920 (Reels / TikTok)</option><option value="0x0">As shown in preview</option></select>
+  <label>Pace: <b id="pv">1.2</b>x (gaps between scenes; also scene speed when Auto-sync is off). Voice always plays at natural speed.</label>
+  <input id="pace" type="range" min="1" max="2.5" step=".1" value="1.2" style="width:100%">
+  <div class="hint"><b>Auto-sync ON</b> fits each scene's animation to its voice line. Leave it ON unless the animation looks too fast or slow.</div>
+  <label><input id="recc" type="checkbox" checked> Record video while playing</label>
+  <div class="row"><button class="btn g" id="start" disabled>&#9654; Start &amp; Record</button><button class="btn" id="rst" disabled>&#8635; Reset</button><button class="btn p" id="dl" disabled>&#11015; Download video</button></div>
+</section>
+<section class="pane" id="p2">
+  <div class="card"><b>Cartesia voice (required)</b><br>This studio uses only Cartesia for narration. No browser or Microsoft voices. Paste your key, load your voices, and pick a Narrator, Male and Female voice (or leave it automatic). The model is chosen automatically.</div>
+  <label>Cartesia API key (kept in memory only, sent only to api.cartesia.ai)</label>
+  <input id="key" type="password" placeholder="sk_car_..." autocomplete="off">
+  <label><input id="rem" type="checkbox" checked> Remember my key on this device (browser storage)</label>
+  <div class="row"><button class="btn" id="ksave">&#128190; Save key to text file</button><label class="btn" for="kload">&#128194; Load key from file</label><input id="kload" type="file" accept=".txt,text/plain" hidden><button class="btn" id="kclear">&#128465; Forget key</button></div>
+  <div class="hint">The key is stored only on this device, in plain text. Do not use these buttons on a shared computer, and keep <code>cartesia-key.txt</code> private.</div>
+  <label>Optional: one Voice ID for every role (use this if the voice list will not load)</label>
+  <input id="vid" type="text" placeholder="Paste a Voice ID from play.cartesia.ai" autocomplete="off">
+  <div class="row"><button class="btn p" id="tk">&#128273; Test API key &amp; load voices</button></div>
+  <div id="ks" class="card">Key not tested yet.</div>
+  <div id="asg" class="card">Voices in use: automatic. Tap Narrator / Male / Female on a voice to choose it for that role.</div>
+  <div id="vl"></div>
+  <div class="card" id="mod">Model: automatic (latest Cartesia model, with fallback)</div>
+</section>
+<section class="pane" id="p3">
+  <label>Story title</label><input id="ti" type="text" value="Emeka's Big Morning">
+  <label>Story text (paste it into the prompt)</label><input id="sto" type="text" placeholder="Paste or type your story here">
+  <label>Prompt for the AI that writes your Three.js file</label>
+  <textarea id="pr" readonly></textarea>
+  <div class="row"><button class="btn g" id="cp">&#128203; Copy prompt</button></div>
+</section>
+<section class="pane" id="p5"><div class="card"><b>Step-by-step guide</b><ol>
+<li><b>&#128194; Import HTML story</b> (Studio tab): choose your story file. Wait for "Ready: N scenes found".</li>
+<li><b>Cartesia key</b> (Voice tab): paste it. With "Remember my key" ticked it is saved and filled in next time. <b>&#128190; Save key to text file</b> downloads <code>cartesia-key.txt</code>; <b>&#128194; Load key from file</b> reads it back; <b>&#128465; Forget key</b> deletes it from this device.</li>
+<li><b>&#128273; Test API key &amp; load voices</b>: must show a green tick. <b>&#9654; Test</b> plays a sample. <b>Narrator / Male / Female</b> choose which voice is used for each role (optional, automatic otherwise).</li>
+<li><b>Video quality</b> (Studio tab): <b>select it BEFORE Start &amp; Record</b>. Full HD for YouTube, Vertical for Reels/TikTok, 720p if your laptop is slow.</li>
+<li><b>Pace</b>: set before Start. Higher means shorter gaps between scenes. Voice speed never changes.</li>
+<li><b>Auto-sync</b>: ON fits scene animation to each voice line. Toggle before Start.</li>
+<li><b>Record video while playing</b>: untick to only watch the story without making a file.</li>
+<li><b>&#9654; Start &amp; Record</b>: first generates all voices (wait for the progress text), then plays and records. <b>Keep this tab open and visible</b> until it says "Video ready".</li>
+<li><b>&#11015; Download video</b>: turns on when the story ends. You get a .webm file; use CapCut or a converter for MP4.</li>
+<li><b>&#8635; Reset</b>: reloads the story so you can change quality or pace and record again.</li>
+<li><b>Prompt tab</b>: type the title and story, then <b>&#128203; Copy prompt</b> and give it to Claude to make a new story file.</li>
+</ol></div></section>
+<section class="pane" id="p4"><div class="card"><ol>
+<li><b>Make the story file:</b> in the Prompt tab type your title and story, copy the prompt, and give it to Claude. You get one HTML file.</li>
+<li><b>Import it</b> in the Studio tab. The app reads its list of scenes (<code>beats</code>).</li>
+<li><b>Voice:</b> every line is generated with Cartesia before you press Start, so nothing waits or stutters during the video.</li>
+<li><b>Auto-sync:</b> the app measures each voice line and stretches or compresses that scene's animation to fit it exactly. A scene ends when its voice ends, then the next one starts.</li>
+<li><b>Record:</b> picture, subtitles, voice, music and sound effects are recorded together at your chosen quality (up to 1080p).</li>
+<li><b>Keep this tab open and visible</b> while it records. The app also asks your device not to sleep.</li>
+<li><b>Download</b> appears when the story ends. It is a .webm file; CapCut or any converter can turn it into MP4.</li>
+</ol>
+<b>Host it yourself:</b> Cartesia calls and file downloads are blocked inside claude.ai published pages, so save this file and open it locally (through http://localhost is safest) or upload it to your own site.</div></section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id),fr=$('fr'),URL_TTS='https://api.cartesia.ai/tts/bytes';
+let cw,ACX,mix,dest,KEY='',MODEL=null,VOICES={},cache={},pace=1.2,rec,chunks=[],poll,R,comp=document.createElement('canvas'),cx=comp.getContext('2d'),SRC='',HDR={},sync=true,wl=null;
+const st=t=>$('st').textContent=t,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),mmss=s=>Math.floor(s/60)+':'+String(Math.round(s%60)).padStart(2,'0');
+$('pace').oninput=e=>$('pv').textContent=e.target.value;
+const LS={get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},set(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}};
+$('key').value=LS.get('ss_key');$('vid').value=LS.get('ss_vid');if($('key').value)$('ks').textContent='Saved key found. Press Test API key & load voices.';
+function saveKey(){if($('rem').checked){LS.set('ss_key',$('key').value.trim());LS.set('ss_vid',$('vid').value.trim())}}
+$('key').addEventListener('input',saveKey);$('vid').addEventListener('input',saveKey);
+$('rem').onchange=()=>{$('rem').checked?saveKey():(LS.set('ss_key',''),LS.set('ss_vid',''))};
+$('ksave').onclick=()=>{const k=$('key').value.trim();if(!k){$('ks').textContent='Enter your key first.';return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([k],{type:'text/plain'}));a.download='cartesia-key.txt';a.click();
+  $('ks').textContent='Key saved to cartesia-key.txt in your Downloads folder. Keep that file private.'};
+$('kload').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('key').value=(await f.text()).trim();saveKey();$('ks').textContent='Key loaded from '+f.name+'. Press Test API key & load voices.'};
+$('kclear').onclick=()=>{$('key').value='';$('vid').value='';LS.set('ss_key','');LS.set('ss_vid','');$('ks').textContent='Key removed from this device.'};
+$('sync').onclick=()=>{sync=!sync;$('sync').textContent='\u{1F3AF} Auto-sync audio & video: '+(sync?'ON':'OFF');$('sync').classList.toggle('off',!sync)};
+document.addEventListener('visibilitychange',()=>{if(ACX&&ACX.state==='suspended')ACX.resume()});
+
+/* ---- import + preview ---- */
+$('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;SRC=await f.text();load()};
+function load(){clearInterval(poll);rec=null;$('dl').disabled=true;$('start').disabled=true;$('qual').disabled=$('pace').disabled=false;cache={};st('Loading story...');fr.srcdoc=SRC}
+fr.onload=()=>{if(!SRC)return;try{cw=fr.contentWindow;const n=cw.eval('beats.length');cw.eval('SP;run;say');
+  st('Ready: '+n+' scenes found. Add your Cartesia key in the Voice tab, then press Start.');$('start').disabled=false;$('rst').disabled=false}
+  catch(e){st('This file is not in the supported format. Use the Prompt tab to generate a compatible one.')}};
+$('rst').onclick=()=>{if(SRC)load()};
+
+/* ---- Cartesia voice ---- */
+let ALL=[],ASSIGN={},ANAME={},TC;
+const authH=()=>({'Cartesia-Version':'2025-04-16',Authorization:'Bearer '+KEY});
+async function fetchVoices(){
+  HDR=authH();const r=await fetch('https://api.cartesia.ai/voices?limit=100',{headers:HDR});
+  if(!r.ok)throw new Error(r.status===401||r.status===403?'Key rejected ('+r.status+')':'Cartesia error '+r.status);
+  const j=await r.json();ALL=(Array.isArray(j)?j:j.data||j.voices||[]).filter(v=>!v.language||/^en/i.test(v.language));return ALL}
+async function tts(text,n,tries=3){
+  HDR=authH();let last='';
+  for(const m of MODEL?[MODEL]:['sonic-latest','sonic-3']){
+    for(let a=0;a<tries;a++){
+      const r=await fetch(URL_TTS,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},HDR),body:JSON.stringify({model_id:m,transcript:text,voice:{mode:'id',id:VOICES[n]||VOICES.N},output_format:{container:'wav',encoding:'pcm_s16le',sample_rate:44100},language:'en'})});
+      if(r.ok){MODEL=m;return r.arrayBuffer()}
+      last='Cartesia '+r.status+' '+(await r.text()).slice(0,100);
+      if(r.status===401||r.status===403)throw new Error('Key rejected ('+r.status+')');
+      if(r.status===429||r.status>=500){await new Promise(z=>setTimeout(z,800*(a+1)));continue}
+      break}}
+  throw new Error(last||'No Cartesia model worked')}
+async function testVoice(v){TC=TC||new(window.AudioContext||window.webkitAudioContext)();await TC.resume();VOICES.__t=v.id;
+  const buf=await TC.decodeAudioData(await tts('Hello, this is how I sound. Madam, why are you blocking my blessing?','__t'));
+  $('mod').textContent='Model in use: '+MODEL+' (auto-selected)';
+  await new Promise(res=>{const s=TC.createBufferSource();s.buffer=buf;s.connect(TC.destination);s.onended=res;s.start()})}
+function renderVoices(){const L=$('vl');L.innerHTML='';
+  ALL.forEach(v=>{const d=document.createElement('div');d.className='vr';d.innerHTML='<div><b></b><small></small></div>';
+    d.querySelector('b').textContent=v.name||String(v.id).slice(0,8);d.querySelector('small').textContent='  '+[v.language,v.gender].filter(Boolean).join(' / ');
+    const bs=document.createElement('div');bs.className='bs';
+    const mkb=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>f(b);bs.appendChild(b)};
+    mkb('\u25B6 Test',async b=>{b.textContent='...';try{await testVoice(v)}catch(e){$('ks').textContent='\u274C '+e.message}b.textContent='\u25B6 Test'});
+    [['N','Narrator'],['E','Male'],['W','Female']].forEach(([k,l])=>mkb(l,()=>{ASSIGN[k]=v.id;ANAME[k]=v.name||v.id;
+      $('asg').textContent='Chosen: '+Object.entries(ANAME).map(([a,n])=>({N:'Narrator',E:'Male',W:'Female'}[a])+' = '+n).join(', ')}));
+    d.appendChild(bs);L.appendChild(d)})}
+$('tk').onclick=async()=>{KEY=$('key').value.trim();if(!KEY){$('ks').textContent='Enter your key first.';return}
+  $('ks').textContent='Testing key...';MODEL=null;
+  try{await fetchVoices();if(!ALL.length)throw new Error('Key works but no English voices were returned.');renderVoices();
+    saveKey();$('ks').textContent='\u2705 Key works. '+ALL.length+' voices found. Tap Test to hear one.'}
+  catch(e){$('ks').textContent='\u274C '+(e instanceof TypeError?'Could not reach Cartesia ('+e.message+'). Check internet, VPN or ad blocker, and open this file via http://localhost instead of inside claude.ai.':e.message)}};
+async function setupVoice(beats){
+  const dv=$('vid').value.trim();
+  if(!ALL.length&&!dv)await fetchVoices();
+  const all=ALL,g=s=>all.filter(v=>(v.gender||'').toLowerCase().startsWith(s)),pick=(a,k)=>(a[k]||a[0]||all[k]||all[0]).id;
+  VOICES=dv?{N:dv,E:dv,W:dv}:{N:pick(g('m'),0),E:pick(g('m'),1),W:pick(g('f'),0)};Object.assign(VOICES,ASSIGN);
+  const lines=[...new Map(beats.map(b=>[b.s||b.t,b])).values()];let done=0;
+  const one=async b=>{const k=b.s||b.t;cache[k]=await ACX.decodeAudioData(await tts(k,b.n));st('Generating Cartesia voice '+(++done)+'/'+lines.length+'...')};
+  await one(lines[0]);$('mod').textContent='Model in use: '+MODEL+' (auto-selected)';
+  const q=lines.slice(1);await Promise.all([0,1,2].map(async()=>{while(q.length)await one(q.shift())}));
+  const tot=beats.reduce((a,b)=>a+cache[b.s||b.t].duration,0);return tot}
+function speak(b){const buf=cache[b.s||b.t];
+  return new Promise(res=>{if(!buf)return setTimeout(res,800);const s=ACX.createBufferSource();s.buffer=buf;s.connect(ACX.destination);s.onended=res;s.start()})}
+
+/* ---- recording canvas with subtitles ---- */
+function wrap(t,w){const out=[];let l='';t.split(' ').forEach(x=>{const n=l?l+' '+x:x;if(cx.measureText(n).width>w&&l){out.push(l);l=x}else l=n});out.push(l);return out}
+function draw(){const c=R.domElement,w=c.width,h=c.height;if(comp.width!==w||comp.height!==h){comp.width=w;comp.height=h}
+  cx.drawImage(c,0,0);const d=cw.document,sub=(d.getElementById('sub')||{}).textContent||'',who=(d.getElementById('who')||{}).textContent||'',fs=Math.round(Math.min(w,h*.7)/22);
+  cx.font='bold '+fs+'px Arial';const ls=wrap(sub,w*.88),bh=(ls.length+1)*fs*1.3+fs*.6,by=h-bh-fs*(w<h?4:1);
+  cx.fillStyle='rgba(0,0,0,.7)';cx.fillRect(0,by,w,bh+fs);cx.textAlign='center';cx.textBaseline='top';
+  cx.fillStyle='#ffb703';cx.fillText(who,w/2,by+fs*.5);cx.fillStyle='#fff';ls.forEach((l,i)=>cx.fillText(l,w/2,by+fs*.5+fs*1.3*(i+1)))}
+
+/* ---- start ---- */
+$('start').onclick=async()=>{
+  try{
+    KEY=$('key').value.trim();pace=+$('pace').value;MODEL=null;
+    if(!KEY){st('Add your Cartesia API key in the Voice tab first. This studio uses Cartesia voices only.');return}
+    $('start').disabled=true;$('qual').disabled=$('pace').disabled=true;
+    const beats=cw.eval('beats.map(b=>({n:b.n,t:b.t,s:b.s}))');
+    cw.eval('AC=new (window.AudioContext||window.webkitAudioContext)()');ACX=cw.eval('AC');await ACX.resume();
+    mix=ACX.createGain();mix.connect(ACX.destination);dest=ACX.createMediaStreamDestination();mix.connect(dest);
+    Object.defineProperty(ACX,'destination',{value:mix});
+    let total;try{total=await setupVoice(beats)}catch(e){st('Voice error: '+e.message);$('start').disabled=false;$('qual').disabled=$('pace').disabled=false;return}
+    st('Voices ready ('+mmss(total)+' of speech). Starting...');
+    /* take over the story's speech: voice length drives each scene; auto-sync fits the animation to it */
+    cw.say=b=>{const s=cw.eval('SP')[b.n],d=cw.document,buf=cache[b.s||b.t];
+      d.getElementById('who').textContent=s.l;d.getElementById('who').style.color=s.c;d.getElementById('sub').textContent=b.t;
+      if(sync&&buf){const T=cw.eval('TL');if(T&&T.duration()>0)T.timeScale(clamp(T.duration()/(buf.duration*.95),.4,3))}
+      if(s.k)s.k.talk=true;return speak(b).catch(()=>{}).then(()=>{if(s.k)s.k.talk=false})};
+    const ost=cw.setTimeout.bind(cw);cw.setTimeout=(f,ms,...a)=>ost(f,(ms||0)/pace,...a);
+    cw.gsap.globalTimeline.timeScale(sync?1:pace);
+    R=cw.eval('renderer');
+    const [QW,QH]=$('qual').value.split('x').map(Number);
+    if(QW){const cm=cw.eval('camera');R.setPixelRatio(1);R.setSize(QW,QH,false);cm.aspect=QW/QH;cm.fov=QW<QH?62:48;cm.updateProjectionMatrix();
+      R.domElement.style.cssText='display:block;width:100%;height:100%;object-fit:contain;background:#000'}
+    const orr=R.render.bind(R);R.render=(s,c)=>{orr(s,c);if(rec&&rec.state==='recording')draw()};
+    try{wl=await navigator.wakeLock.request('screen')}catch(e){}
+    if($('recc').checked&&window.MediaRecorder){
+      draw();const stream=new MediaStream([...comp.captureStream(30).getVideoTracks(),...dest.stream.getAudioTracks()]);
+      const mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m));
+      chunks=[];rec=new MediaRecorder(stream,{mimeType:mt,videoBitsPerSecond:Math.max(QW,QH)>=1900?14e6:8e6,audioBitsPerSecond:192000});
+      rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+      rec.onstop=()=>{try{wl&&wl.release()}catch(e){}const blob=new Blob(chunks,{type:mt}),u=URL.createObjectURL(blob);$('dl').disabled=false;
+        $('dl').onclick=()=>{const a=document.createElement('a');a.href=u;a.download=($('ti').value||'story').replace(/\W+/g,'_')+(mt.includes('mp4')?'.mp4':'.webm');a.click()};
+        st('Video ready ('+(blob.size/1048576).toFixed(1)+' MB). Press Download.')};
+      rec.start(1000)}
+    cw.document.getElementById('ov').style.display='none';st('Playing'+(rec?' and recording. Keep this tab visible until it finishes...':'...'));
+    cw.run(0);const N=beats.length;
+    poll=setInterval(()=>{try{if(cw.eval('idx')===N-1&&cw.eval('fin')){clearInterval(poll);setTimeout(()=>{if(rec&&rec.state==='recording'){rec.requestData();rec.stop()}else{st('Finished.');try{wl&&wl.release()}catch(e){}}},1500)}}catch(e){}},300);
+  }catch(e){st('Error: '+e.message);$('start').disabled=false}};
+
+/* ---- prompt generator ---- */
+function mkPrompt(){const t=$('ti').value||'My Story',s=$('sto').value||'[PASTE YOUR STORY HERE, one sentence per line]';
+return `Write ONE complete single-file HTML page (HTML + CSS + JavaScript, no external files) for a mobile-responsive interactive 3D animated story titled "${t}".
+Use the same tech and style as my first "Mark's Story" 3D page: HTML + CSS + JavaScript + Three.js r128 + GSAP 3.12 (both from cdnjs) in one file. Build everything from low-poly geometry (boxes, spheres, cylinders), like that page's street, trees, lamps, brick house, glowing windows, sky and clouds. Characters are built from a sphere head with hair, eyes, a box torso, cylinder or box legs and arms that swing, with walk, wave, type and talk animations. GSAP animates the camera (zoom, pan, orbit) and objects. The user can drag to rotate and scroll to zoom. No images.
+
+STORY:
+${s}
+
+SCENES: 2 to 4 small 3D sets (e.g. room, street, building interior) shown one at a time. Characters built from primitives with idle, walk, talk, cheer, sit animations.
+
+REQUIRED CONTRACT (my video app controls the file through these names, keep them exactly):
+1. const renderer = new THREE.WebGLRenderer(...), appended to document.body.
+2. const beats = [ {n:'N'|'E'|'W', t:'subtitle text', s:'text to speak (optional, no emoji)', set:'...', cam:[tx,ty,tz,r,theta,phi], setup(){}, act(tl){}, sfx:'', after:''} ] with one beat per line of the story. n = speaker: N narrator, E and W are characters.
+3. const SP = { N:{l:'NARRATOR',c:'#ffb703'}, E:{l:'NAME',c:'#4cc9f0',k:characterObject}, W:{...} } where k is the character object with a boolean .talk that animates the mouth/arms.
+4. let idx, fin; async function run(i) that plays beat i (setup, camera, GSAP timeline act(tl), sound, await say(b)), sets fin=true when finished, then calls next(). function say(b) must return a Promise. Keep the beat's GSAP timeline in a global variable named TL.
+5. Elements: #ov (start overlay), #go (start button), #who and #sub (speaker name and subtitle text), bottom controls Pause, Prev, Next, Replay.
+6. Camera: spherical around a target (tx,ty,tz,r,theta,phi) animated with GSAP. For every beat: cut to the beat's preset, start at r*1.25 and push in to r over 1.2s, then drift theta by +0.15 over 7s. Use wide shots (r about 11) to establish, medium (r about 6.5) for two people talking, close-ups (r about 4) on punchlines.
+7. Sound: WebAudio only (no audio files): global let AC; function tone(freq,dur,type,vol,delay,endFreq) that connects to AC.destination. Add sound effects per beat and light background music.
+8. Keep it fast: MeshLambertMaterial, pixel ratio max 1.5, no shadows, no heavy models.
+9. Show the page in portrait and landscape, buttons at least 46px tall.
+Return only the full HTML from <!DOCTYPE html> to </html>.`}
+function upd(){$('pr').value=mkPrompt()}$('ti').oninput=$('sto').oninput=upd;upd();
+$('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('pr').value)}catch(e){$('pr').select();document.execCommand('copy')}$('cp').textContent='Copied!';setTimeout(()=>$('cp').innerHTML='&#128203; Copy prompt',1500)};
+</script>
+</body>
+</html>
