@@ -25,12 +25,12 @@ label{display:block;font-size:13px;margin:10px 0 4px;opacity:.85}
 .vr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;background:#121a36;border-radius:10px;padding:8px;margin:6px 0;font-size:14px}.vr small{opacity:.7}
 .bs{display:flex;gap:6px;flex-wrap:wrap}.bs button{min-height:42px;padding:0 12px;border:0;border-radius:8px;background:#2a3769;color:#fff;font-weight:700}.bs button:first-child{background:#ffb703;color:#111}
 #st{font-size:13px;color:#ffd166;min-height:18px;margin-top:6px}
-  .hint{font-size:12px;opacity:.75;margin:4px 0 8px;line-height:1.4}.hint b{color:#ffd166}
+.hint{font-size:12px;opacity:.75;margin:4px 0 8px;line-height:1.4}.hint b{color:#ffd166}
 ol{padding-left:20px;line-height:1.55;font-size:14px}code{background:#1d2850;padding:1px 5px;border-radius:5px}
 </style>
 </head>
 <body>
-<header><h1>&#127916; Story Studio</h1><p>Import a 3D story (HTML) &rarr; Cartesia voice &rarr; auto-synced scenes &rarr; HD video</p></header>
+<header><h1>&#127916; Story Studio</h1><p>Import a 3D story (HTML) &rarr; Cartesia voice &rarr; auto-synced scenes &rarr; HD MP4 video</p></header>
 <div id="tabs"><button class="on" onclick="tab('p1',this)">Studio</button><button onclick="tab('p2',this)">Voice</button><button onclick="tab('p3',this)">Prompt</button><button onclick="tab('p5',this)">Guide</button><button onclick="tab('p4',this)">How it works</button></div>
 <script>
 function tab(id,b){var a=document.querySelectorAll('#tabs button,.pane');for(var i=0;i<a.length;i++)a[i].classList.remove('on');b.classList.add('on');document.getElementById(id).classList.add('on')}
@@ -50,7 +50,8 @@ window.onerror=function(m,u,l){var e=document.getElementById('st');if(e)e.textCo
   <input id="pace" type="range" min="1" max="2.5" step=".1" value="1.2" style="width:100%">
   <div class="hint"><b>Auto-sync ON</b> fits each scene's animation to its voice line. Leave it ON unless the animation looks too fast or slow.</div>
   <label><input id="recc" type="checkbox" checked> Record video while playing</label>
-  <div class="row"><button class="btn g" id="start" disabled>&#9654; Start &amp; Record</button><button class="btn" id="rst" disabled>&#8635; Reset</button><button class="btn p" id="dl" disabled>&#11015; Download video</button></div>
+  <div class="row"><button class="btn g" id="start" disabled>&#9654; Start &amp; Record</button><button class="btn" id="rst" disabled>&#8635; Reset</button><button class="btn p" id="dl" disabled>&#11015; Download MP4</button></div>
+  <div id="xs" class="card" style="display:none;font-size:13px"></div>
 </section>
 <section class="pane" id="p2">
   <div class="card"><b>Cartesia voice (required)</b><br>This studio uses only Cartesia for narration. No browser or Microsoft voices. Paste your key, load your voices, and pick a Narrator, Male and Female voice (or leave it automatic). The model is chosen automatically.</div>
@@ -78,32 +79,34 @@ window.onerror=function(m,u,l){var e=document.getElementById('st');if(e)e.textCo
 <li><b>&#128194; Import HTML story</b> (Studio tab): choose your story file. Wait for "Ready: N scenes found".</li>
 <li><b>Cartesia key</b> (Voice tab): paste it. With "Remember my key" ticked it is saved and filled in next time. <b>&#128190; Save key to text file</b> downloads <code>cartesia-key.txt</code>; <b>&#128194; Load key from file</b> reads it back; <b>&#128465; Forget key</b> deletes it from this device.</li>
 <li><b>&#128273; Test API key &amp; load voices</b>: must show a green tick. <b>&#9654; Test</b> plays a sample. <b>Narrator / Male / Female</b> choose which voice is used for each role (optional, automatic otherwise).</li>
-<li><b>Video quality</b> (Studio tab): <b>select it BEFORE Start &amp; Record</b>. Full HD for YouTube, Vertical for Reels/TikTok, 720p if your laptop is slow.</li>
+<li><b>Video quality</b> (Studio tab): select Full HD for YouTube, Vertical for Reels/TikTok, 720p if your device is slow.</li>
 <li><b>Pace</b>: set before Start. Higher means shorter gaps between scenes. Voice speed never changes.</li>
 <li><b>Auto-sync</b>: ON fits scene animation to each voice line. Toggle before Start.</li>
 <li><b>Record video while playing</b>: untick to only watch the story without making a file.</li>
-<li><b>&#9654; Start &amp; Record</b>: first generates all voices (wait for the progress text), then plays and records. <b>Keep this tab open and visible</b> until it says "Video ready".</li>
-<li><b>&#11015; Download video</b>: turns on when the story ends. You get a .webm file; use CapCut or a converter for MP4.</li>
+<li><b>&#9654; Start &amp; Record</b>: first generates all voices, then plays and records. Keep this tab open and visible until conversion finishes.</li>
+<li><b>&#11015; Download MP4</b>: the app records a browser-compatible WebM file, then converts it locally to MP4 (H.264 video + AAC audio). Conversion time depends on your device (a progress percentage is shown). If conversion cannot run on the device, the reason is shown and the original WebM is offered as a fallback.</li>
 <li><b>&#8635; Reset</b>: reloads the story so you can change quality or pace and record again.</li>
-<li><b>Prompt tab</b>: type the title and story, then <b>&#128203; Copy prompt</b> and give it to Claude to make a new story file.</li>
+<li><b>Prompt tab</b>: type the title and story, then Copy prompt and give it to Claude to make a new story file.</li>
 </ol></div></section>
 <section class="pane" id="p4"><div class="card"><ol>
 <li><b>Make the story file:</b> in the Prompt tab type your title and story, copy the prompt, and give it to Claude. You get one HTML file.</li>
 <li><b>Import it</b> in the Studio tab. The app reads its list of scenes (<code>beats</code>).</li>
-<li><b>Voice:</b> every line is generated with Cartesia before you press Start, so nothing waits or stutters during the video.</li>
-<li><b>Auto-sync:</b> the app measures each voice line and stretches or compresses that scene's animation to fit it exactly. A scene ends when its voice ends, then the next one starts.</li>
-<li><b>Record:</b> picture, subtitles, voice, music and sound effects are recorded together at your chosen quality (up to 1080p).</li>
-<li><b>Keep this tab open and visible</b> while it records. The app also asks your device not to sleep.</li>
-<li><b>Download</b> appears when the story ends. It is a .webm file; CapCut or any converter can turn it into MP4.</li>
+<li><b>Voice:</b> every line is generated with Cartesia before playback, so nothing waits or stutters during the video.</li>
+<li><b>Auto-sync:</b> the app measures each voice line and stretches or compresses that scene's animation to fit it.</li>
+<li><b>Record:</b> picture, subtitles and narration are recorded together at your chosen resolution.</li>
+<li><b>Export:</b> the browser recording is converted to MP4 using H.264 and AAC. Conversion runs on your device, not on a remote video server.</li>
 </ol>
-<b>Host it yourself:</b> Cartesia calls and file downloads are blocked inside claude.ai published pages, so save this file and open it locally (through http://localhost is safest) or upload it to your own site.</div></section>
+<b>Hosting:</b> Use GitHub Pages or another HTTPS host. The first MP4 export downloads the FFmpeg conversion engine (about 31 MB), so keep the page open and connected to the internet during the first conversion. If the file is opened from a local <code>content://</code> or <code>file://</code> address, browsers usually block the converter's background worker; you will then get the original WebM instead.</div></section>
 </main>
 
 <script>
 const $=id=>document.getElementById(id),fr=$('fr'),URL_TTS='https://api.cartesia.ai/tts/bytes';
 let cw,ACX,mix,dest,KEY='',MODEL=null,VOICES={},cache={},pace=1.2,rec,chunks=[],poll,R,comp=document.createElement('canvas'),cx=comp.getContext('2d'),SRC='',HDR={},sync=true,wl=null;
+let recordingMime='',exportJob=0,exportBlob=null,recStartMs=0;
+
 const st=t=>$('st').textContent=t,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),mmss=s=>Math.floor(s/60)+':'+String(Math.round(s%60)).padStart(2,'0');
 $('pace').oninput=e=>$('pv').textContent=e.target.value;
+
 const LS={get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},set(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}};
 $('key').value=LS.get('ss_key');$('vid').value=LS.get('ss_vid');if($('key').value)$('ks').textContent='Saved key found. Press Test API key & load voices.';
 function saveKey(){if($('rem').checked){LS.set('ss_key',$('key').value.trim());LS.set('ss_vid',$('vid').value.trim())}}
@@ -117,13 +120,182 @@ $('kclear').onclick=()=>{$('key').value='';$('vid').value='';LS.set('ss_key','')
 $('sync').onclick=()=>{sync=!sync;$('sync').textContent='\u{1F3AF} Auto-sync audio & video: '+(sync?'ON':'OFF');$('sync').classList.toggle('off',!sync)};
 document.addEventListener('visibilitychange',()=>{if(ACX&&ACX.state==='suspended')ACX.resume()});
 
+/* ---- FFmpeg MP4 export ----
+   MediaRecorder records WebM in most browsers. After recording, the WebM is converted locally to
+   MP4 (H.264 + AAC, yuv420p, 30 fps, faststart) with FFmpeg.wasm 0.12.x.
+   Worker fix: a Worker cannot be created from a cross-origin script URL (and the page origin may be
+   "null" on content:// or file://). So the worker chunk, core JS and WASM are DOWNLOADED with fetch()
+   (CORS-enabled CDNs) and handed to FFmpeg as same-origin blob: URLs (classWorkerURL / coreURL / wasmURL).
+   The single-thread core is used, so no SharedArrayBuffer / COOP / COEP headers are needed (works on GitHub Pages). */
+const FF={ver:'0.12.10',coreVer:'0.12.6',roots:['https://cdn.jsdelivr.net/npm','https://unpkg.com'],
+  urls:{},lib:null,chunks:[],engine:null,coreOrder:['esm','umd'],logs:[],onTime:null,onProgress:null};
+const withTimeout=(p,ms,msg)=>{let t;return Promise.race([p,new Promise((_,rej)=>{t=setTimeout(()=>rej(new Error(msg)),ms)})]).finally(()=>clearTimeout(t))};
+const fmtT=s=>mmss(Math.max(0,s));
+function xnote(msg){const e=$('xs');if(!e)return;e.style.display=msg?'block':'none';e.textContent=msg||''}
+function envHint(){const p=location.protocol;
+  if(p==='http:'||p==='https:')return '';
+  return 'Heads-up: this page is open from "'+(p||'a local file')+'" (browser origin "null", e.g. Android content:// or file://). Browsers often block the FFmpeg converter there. For reliable MP4 export, host this file on GitHub Pages (HTTPS) and open it from that address. If conversion cannot run you will still get the original WebM recording.'}
+
+async function fetchCDN(path,mime,label){
+  let last;
+  for(const root of FF.roots){
+    try{
+      const r=await fetch(root+path,{mode:'cors'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const parts=[];let got=0;
+      if(r.body&&r.body.getReader){const rd=r.body.getReader();for(;;){const x=await rd.read();if(x.done)break;parts.push(x.value);got+=x.value.length;st(label+' '+(got/1048576).toFixed(1)+' MB')}}
+      else{const buf=await r.arrayBuffer();parts.push(new Uint8Array(buf));got=buf.byteLength}
+      if(!got)throw new Error('empty response');
+      return new Blob(parts,{type:mime});
+    }catch(e){last=e;console.warn('[FFmpeg] download failed from',root,e)}
+  }
+  throw new Error('Could not download '+label.replace(/\.\.\.$/,'')+' ('+(last&&last.message||last)+'). Check your internet connection or ad blocker.');
+}
+
+async function checkWorkerSupport(){
+  if(!window.WebAssembly)throw new Error('This browser does not support WebAssembly, so MP4 conversion cannot run.');
+  if(!window.Worker)throw new Error('This browser does not support Web Workers, so MP4 conversion cannot run.');
+  let u,w;
+  try{
+    u=URL.createObjectURL(new Blob(['postMessage("ok")'],{type:'text/javascript'}));
+    w=new Worker(u);
+    await withTimeout(new Promise((ok,bad)=>{w.onmessage=()=>ok();w.onerror=e=>bad(new Error(e.message||'worker blocked'))}),6000,'worker did not start');
+  }catch(e){
+    throw new Error('This browser/page blocks the background worker that FFmpeg needs ('+(e.message||e)+'). '+(envHint()||'Try Chrome or Edge over HTTPS.'));
+  }finally{try{w&&w.terminate()}catch(e){}if(u)URL.revokeObjectURL(u)}
+}
+
+async function ensureLib(){
+  if(FF.lib)return FF.lib;
+  let last;
+  for(const root of FF.roots){
+    const base=root+'/@ffmpeg/ffmpeg@'+FF.ver+'/dist/umd';
+    try{
+      if(!(window.FFmpegWASM&&window.FFmpegWASM.FFmpeg)){
+        await withTimeout(new Promise((ok,bad)=>{const sc=document.createElement('script');sc.src=base+'/ffmpeg.js';sc.onload=ok;sc.onerror=()=>{sc.remove();bad(new Error('script blocked or offline'))};document.head.appendChild(sc)}),60000,'timed out');
+      }
+      if(!(window.FFmpegWASM&&window.FFmpegWASM.FFmpeg))throw new Error('library did not initialise');
+      FF.lib=window.FFmpegWASM;FF.base=base;
+      const names=[];
+      try{const t=await (await fetch(base+'/ffmpeg.js')).text();
+        let m=t.match(/(\d+)\.ffmpeg\.js/);if(m)names.push(m[0]);
+        m=t.match(/\.u\((\d+)\)/);if(m)names.push(m[1]+'.ffmpeg.js')}catch(e){}
+      names.push('814.ffmpeg.js');FF.chunks=[...new Set(names)];
+      return FF.lib;
+    }catch(e){last=e;console.warn('[FFmpeg] library load failed from',root,e)}
+  }
+  throw new Error('Could not load the FFmpeg library ('+(last&&last.message||last)+'). Check your internet connection or ad blocker.');
+}
+
+async function ensureWorkerURL(){
+  if(FF.urls.worker)return FF.urls.worker;
+  let last;
+  for(const n of FF.chunks){
+    try{const blob=await fetchCDN('/@ffmpeg/ffmpeg@'+FF.ver+'/dist/umd/'+n,'text/javascript','Downloading converter worker...');
+      return FF.urls.worker=URL.createObjectURL(blob)}catch(e){last=e}
+  }
+  throw last||new Error('Converter worker could not be downloaded.');
+}
+
+async function getEngine(){
+  await checkWorkerSupport();
+  st('Preparing MP4 converter...');
+  const lib=await ensureLib();
+  const classWorkerURL=await ensureWorkerURL();
+  if(!FF.urls.wasm)FF.urls.wasm=URL.createObjectURL(await fetchCDN('/@ffmpeg/core@'+FF.coreVer+'/dist/umd/ffmpeg-core.wasm','application/wasm','Downloading converter engine (about 31 MB, first time only)...'));
+  let lastErr;
+  for(const kind of FF.coreOrder.slice()){
+    let engine=null;
+    try{
+      if(!FF.urls['core_'+kind])FF.urls['core_'+kind]=URL.createObjectURL(await fetchCDN('/@ffmpeg/core@'+FF.coreVer+'/dist/'+kind+'/ffmpeg-core.js','text/javascript','Downloading converter core...'));
+      engine=new lib.FFmpeg();
+      engine.on('log',({message})=>{FF.logs.push(String(message));console.log('[FFmpeg]',message);
+        const m=/time=(\d+):(\d+):(\d+(?:\.\d+)?)/.exec(message);
+        if(m&&FF.onTime)FF.onTime(Number(m[1])*3600+Number(m[2])*60+Number(m[3]))});
+      engine.on('progress',({progress})=>{if(FF.onProgress)FF.onProgress(progress)});
+      st('Starting converter...');
+      await withTimeout(engine.load({classWorkerURL,coreURL:FF.urls['core_'+kind],wasmURL:FF.urls.wasm}),120000,'The converter did not start in time');
+      FF.coreOrder=[kind].concat(FF.coreOrder.filter(k=>k!==kind));
+      FF.engine=engine;return engine;
+    }catch(e){lastErr=e;console.warn('[FFmpeg] core "'+kind+'" failed:',e);try{engine&&engine.terminate()}catch(_){}}
+  }
+  throw new Error('Could not start the FFmpeg engine ('+(lastErr&&lastErr.message||lastErr)+').'+(envHint()?' '+envHint():''));
+}
+
+function inspectMP4(u8){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),boxes=[];let p=0;
+  while(p+8<=u8.length&&boxes.length<64){
+    let size=dv.getUint32(p),hdr=8;const type=String.fromCharCode(u8[p+4],u8[p+5],u8[p+6],u8[p+7]);
+    if(size===1){if(p+16>u8.length)break;size=dv.getUint32(p+8)*4294967296+dv.getUint32(p+12);hdr=16}
+    else if(size===0)size=u8.length-p;
+    boxes.push(type);if(size<hdr)break;p+=size}
+  const mi=boxes.indexOf('moov'),di=boxes.indexOf('mdat');
+  return{boxes,valid:boxes[0]==='ftyp'&&mi>-1&&di>-1,faststart:mi>-1&&di>-1&&mi<di};
+}
+
+async function convertRecordingToMP4(srcBlob,durSec,job){
+  const engine=await getEngine();
+  const inputName='story_input'+(/mp4/.test(srcBlob.type)?'.mp4':'.webm');
+  const outputName='story_output.mp4';
+  FF.logs=[];
+  const upd=sec=>{if(job!==exportJob)return;const pct=Math.max(0,Math.min(99,Math.round(sec/durSec*100)));
+    st('Converting to MP4: '+pct+'% ('+fmtT(sec)+' of '+fmtT(durSec)+'). Keep this tab open and visible.')};
+  FF.onTime=upd;FF.onProgress=null;
+  try{
+    st('Loading recorded video into converter...');
+    await engine.writeFile(inputName,new Uint8Array(await srcBlob.arrayBuffer()));
+    st('Converting to MP4: 0%. Keep this tab open and visible.');
+    const exitCode=await engine.exec([
+      '-fflags','+genpts',
+      '-i',inputName,
+      '-map','0:v:0','-map','0:a:0?',
+      '-vf','scale=trunc(iw/2)*2:trunc(ih/2)*2,fps=30,format=yuv420p',
+      '-c:v','libx264','-preset','ultrafast','-crf','20',
+      '-profile:v','high','-level:v','4.2','-pix_fmt','yuv420p',
+      '-r','30','-g','60',
+      '-c:a','aac','-b:a','192k','-ar','48000','-ac','2',
+      '-af','aresample=async=1:first_pts=0',
+      '-max_muxing_queue_size','1024',
+      '-movflags','+faststart',
+      '-f','mp4',outputName
+    ]);
+    if(exitCode!==0)throw new Error('FFmpeg conversion exited with code '+exitCode+' (the device may have run out of memory; try 1280x720).');
+    const data=await engine.readFile(outputName);
+    if(!data||!data.length)throw new Error('The MP4 output is empty.');
+    const info=inspectMP4(data);
+    if(!info.valid)throw new Error('The converted file is not a valid MP4 container (boxes: '+info.boxes.join(',')+').');
+    const oi=FF.logs.findIndex(l=>/^Output #0/.test(l)),outLog=(oi>=0?FF.logs.slice(oi):FF.logs).join('\n');
+    const hasVideo=/Video: h264/.test(outLog),hasAudio=/Audio: aac/.test(outLog);
+    if(!hasVideo)throw new Error('The converted MP4 has no H.264 video track.');
+    return{blob:new Blob([data],{type:'video/mp4'}),hasAudio,faststart:info.faststart};
+  }finally{
+    FF.onTime=null;FF.onProgress=null;
+    try{await engine.deleteFile(inputName)}catch(e){}
+    try{await engine.deleteFile(outputName)}catch(e){}
+    try{engine.terminate()}catch(e){}   /* frees the WASM memory (important on Android) */
+    FF.engine=null;
+  }
+}
+
+function cleanupFFmpegURLs(){
+  Object.keys(FF.urls).forEach(k=>{try{URL.revokeObjectURL(FF.urls[k])}catch(e){}});FF.urls={};
+}
+window.addEventListener('pagehide',()=>{try{FF.engine&&FF.engine.terminate()}catch(e){}cleanupFFmpegURLs()});
+
+function downloadBlob(blob,filename){
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=u;a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),60000);
+}
+
 /* ---- import + preview ---- */
 $('file').onchange=async e=>{const f=e.target.files[0];if(!f)return;SRC=await f.text();load()};
-function load(){clearInterval(poll);rec=null;$('dl').disabled=true;$('start').disabled=true;$('qual').disabled=$('pace').disabled=false;cache={};st('Loading story...');fr.srcdoc=SRC}
+function load(){clearInterval(poll);rec=null;exportJob++;exportBlob=null;chunks=[];try{FF.engine&&FF.engine.terminate()}catch(e){}FF.engine=null;$('dl').onclick=null;$('dl').textContent='\u2B07 Download MP4';xnote(envHint());$('dl').disabled=true;$('start').disabled=true;$('qual').disabled=$('pace').disabled=false;cache={};st('Loading story...');fr.srcdoc=SRC}
 fr.onload=()=>{if(!SRC)return;try{cw=fr.contentWindow;const n=cw.eval('beats.length');cw.eval('SP;run;say');
   st('Ready: '+n+' scenes found. Add your Cartesia key in the Voice tab, then press Start.');$('start').disabled=false;$('rst').disabled=false}
   catch(e){st('This file is not in the supported format. Use the Prompt tab to generate a compatible one.')}};
-$('rst').onclick=()=>{if(SRC)load()};
 
 /* ---- Cartesia voice ---- */
 let ALL=[],ASSIGN={},ANAME={},TC;
@@ -183,18 +355,19 @@ function draw(){const c=R.domElement,w=c.width,h=c.height;if(comp.width!==w||com
   cx.fillStyle='#ffb703';cx.fillText(who,w/2,by+fs*.5);cx.fillStyle='#fff';ls.forEach((l,i)=>cx.fillText(l,w/2,by+fs*.5+fs*1.3*(i+1)))}
 
 /* ---- start ---- */
+$('rst').onclick=()=>{if(SRC)load()};
 $('start').onclick=async()=>{
   try{
     KEY=$('key').value.trim();pace=+$('pace').value;MODEL=null;
     if(!KEY){st('Add your Cartesia API key in the Voice tab first. This studio uses Cartesia voices only.');return}
     $('start').disabled=true;$('qual').disabled=$('pace').disabled=true;
+    exportJob++;exportBlob=null;$('dl').disabled=true;$('dl').onclick=null;$('dl').textContent='\u2B07 Download MP4';xnote('');
     const beats=cw.eval('beats.map(b=>({n:b.n,t:b.t,s:b.s}))');
     cw.eval('AC=new (window.AudioContext||window.webkitAudioContext)()');ACX=cw.eval('AC');await ACX.resume();
     mix=ACX.createGain();mix.connect(ACX.destination);dest=ACX.createMediaStreamDestination();mix.connect(dest);
     Object.defineProperty(ACX,'destination',{value:mix});
     let total;try{total=await setupVoice(beats)}catch(e){st('Voice error: '+e.message);$('start').disabled=false;$('qual').disabled=$('pace').disabled=false;return}
     st('Voices ready ('+mmss(total)+' of speech). Starting...');
-    /* take over the story's speech: voice length drives each scene; auto-sync fits the animation to it */
     cw.say=b=>{const s=cw.eval('SP')[b.n],d=cw.document,buf=cache[b.s||b.t];
       d.getElementById('who').textContent=s.l;d.getElementById('who').style.color=s.c;d.getElementById('sub').textContent=b.t;
       if(sync&&buf){const T=cw.eval('TL');if(T&&T.duration()>0)T.timeScale(clamp(T.duration()/(buf.duration*.95),.4,3))}
@@ -208,18 +381,62 @@ $('start').onclick=async()=>{
     const orr=R.render.bind(R);R.render=(s,c)=>{orr(s,c);if(rec&&rec.state==='recording')draw()};
     try{wl=await navigator.wakeLock.request('screen')}catch(e){}
     if($('recc').checked&&window.MediaRecorder){
-      draw();const stream=new MediaStream([...comp.captureStream(30).getVideoTracks(),...dest.stream.getAudioTracks()]);
-      const mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m));
-      chunks=[];rec=new MediaRecorder(stream,{mimeType:mt,videoBitsPerSecond:Math.max(QW,QH)>=1900?14e6:8e6,audioBitsPerSecond:192000});
-      rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
-      rec.onstop=()=>{try{wl&&wl.release()}catch(e){}const blob=new Blob(chunks,{type:mt}),u=URL.createObjectURL(blob);$('dl').disabled=false;
-        $('dl').onclick=()=>{const a=document.createElement('a');a.href=u;a.download=($('ti').value||'story').replace(/\W+/g,'_')+(mt.includes('mp4')?'.mp4':'.webm');a.click()};
-        st('Video ready ('+(blob.size/1048576).toFixed(1)+' MB). Press Download.')};
-      rec.start(1000)}
-    cw.document.getElementById('ov').style.display='none';st('Playing'+(rec?' and recording. Keep this tab visible until it finishes...':'...'));
+      draw();
+      const videoStream=comp.captureStream(30);
+      const stream=new MediaStream([...videoStream.getVideoTracks(),...dest.stream.getAudioTracks()]);
+      const candidates=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];
+      const mt=candidates.find(m=>MediaRecorder.isTypeSupported(m));
+      if(!mt)throw new Error('This browser does not support a compatible MediaRecorder video format.');
+      recordingMime=mt;chunks=[];
+      const options={mimeType:mt,videoBitsPerSecond:Math.max(QW,QH)>=1900?14e6:8e6,audioBitsPerSecond:192000};
+      rec=new MediaRecorder(stream,options);
+      rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+      rec.onerror=e=>{console.error('MediaRecorder error',e);st('Recording error: '+(e.error?.message||'unknown error'))};
+      rec.onstop=async()=>{
+        const job=exportJob;
+        try{if(wl)await wl.release()}catch(e){}
+        const recSec=Math.max(1,(performance.now()-recStartMs)/1000);
+        const sourceType=rec.mimeType||recordingMime||'video/webm';
+        const originalBlob=new Blob(chunks,{type:sourceType});chunks=[];
+        if(!originalBlob.size){st('Recording failed: the browser produced an empty video.');$('start').disabled=false;return}
+        $('dl').disabled=true;
+        const baseName=($('ti').value||'story').replace(/\W+/g,'_')||'story';
+        const srcExt=/mp4/.test(sourceType)?'.mp4':'.webm';
+        try{
+          try{wl=await navigator.wakeLock.request('screen')}catch(e){}
+          const res=await convertRecordingToMP4(originalBlob,recSec,job);
+          if(job!==exportJob)return;
+          exportBlob=res.blob;
+          $('dl').onclick=()=>downloadBlob(exportBlob,baseName+'.mp4');
+          $('dl').textContent='\u2B07 Download MP4';
+          $('dl').disabled=false;
+          st('MP4 ready ('+(exportBlob.size/1048576).toFixed(1)+' MB, 30 fps). H.264 video + '+(res.hasAudio?'AAC audio':'NO AUDIO TRACK')+'. Press Download MP4.');
+          const notes=[];
+          if(!res.hasAudio)notes.push('Warning: no audio track was found in the recording, so the MP4 is silent.');
+          if(!res.faststart)notes.push('Note: fast-start metadata could not be confirmed in this file.');
+          xnote(notes.join(' '));
+        }catch(error){
+          if(job!==exportJob)return;
+          console.error('MP4 export failed:',error);
+          $('dl').onclick=()=>downloadBlob(originalBlob,baseName+srcExt);
+          $('dl').textContent='\u2B07 Download '+srcExt.slice(1).toUpperCase()+' fallback';
+          $('dl').disabled=false;
+          st('MP4 conversion failed. The original '+srcExt.slice(1).toUpperCase()+' recording is saved: press the button to download it.');
+          xnote('Reason: '+(error.message||error)+' CapCut, TikTok or Instagram may reject WebM; to get an MP4, host this file on GitHub Pages (HTTPS), open it in Chrome or Edge, and record again, or convert the WebM with another tool.');
+        }finally{
+          try{if(wl)await wl.release()}catch(e){}
+          if(job===exportJob){$('qual').disabled=false;$('pace').disabled=false;$('start').disabled=false}
+        }
+      };
+      recStartMs=performance.now();rec.start(1000);
+    }else{
+      rec=null;
+    }
+    cw.document.getElementById('ov').style.display='none';st('Playing'+(rec?' and recording. Keep this tab visible until export finishes...':'...'));
     cw.run(0);const N=beats.length;
     poll=setInterval(()=>{try{if(cw.eval('idx')===N-1&&cw.eval('fin')){clearInterval(poll);setTimeout(()=>{if(rec&&rec.state==='recording'){rec.requestData();rec.stop()}else{st('Finished.');try{wl&&wl.release()}catch(e){}}},1500)}}catch(e){}},300);
-  }catch(e){st('Error: '+e.message);$('start').disabled=false}};
+  }catch(e){console.error(e);st('Error: '+e.message);$('start').disabled=false;$('qual').disabled=$('pace').disabled=false}
+};
 
 /* ---- prompt generator ---- */
 function mkPrompt(){const t=$('ti').value||'My Story',s=$('sto').value||'[PASTE YOUR STORY HERE, one sentence per line]';
@@ -238,11 +455,12 @@ REQUIRED CONTRACT (my video app controls the file through these names, keep them
 4. let idx, fin; async function run(i) that plays beat i (setup, camera, GSAP timeline act(tl), sound, await say(b)), sets fin=true when finished, then calls next(). function say(b) must return a Promise. Keep the beat's GSAP timeline in a global variable named TL.
 5. Elements: #ov (start overlay), #go (start button), #who and #sub (speaker name and subtitle text), bottom controls Pause, Prev, Next, Replay.
 6. Camera: spherical around a target (tx,ty,tz,r,theta,phi) animated with GSAP. For every beat: cut to the beat's preset, start at r*1.25 and push in to r over 1.2s, then drift theta by +0.15 over 7s. Use wide shots (r about 11) to establish, medium (r about 6.5) for two people talking, close-ups (r about 4) on punchlines.
-7. Sound: WebAudio only (no audio files): global let AC; function tone(freq,dur,type,vol,delay,endFreq) that connects to AC.destination. Add sound effects per beat and light background music.
+7. Sound: WebAudio only (no audio files): global let AC; function tone(freq,dur,type,vol,delay,endFreq) that connects to AC.destination. Use sound effects sparingly and only when an action needs them. Avoid constant background music, random beeps and decorative tones. Prefer appropriate, realistic-sounding effects for clear events (footsteps when walking, door sound when opening, impact when something hits). If a suitable effect cannot be created convincingly with WebAudio, use silence rather than an unrelated beep. Keep narration clear and dominant.
 8. Keep it fast: MeshLambertMaterial, pixel ratio max 1.5, no shadows, no heavy models.
 9. Show the page in portrait and landscape, buttons at least 46px tall.
 Return only the full HTML from <!DOCTYPE html> to </html>.`}
 function upd(){$('pr').value=mkPrompt()}$('ti').oninput=$('sto').oninput=upd;upd();
+xnote(envHint());
 $('cp').onclick=async()=>{try{await navigator.clipboard.writeText($('pr').value)}catch(e){$('pr').select();document.execCommand('copy')}$('cp').textContent='Copied!';setTimeout(()=>$('cp').innerHTML='&#128203; Copy prompt',1500)};
 </script>
 </body>
